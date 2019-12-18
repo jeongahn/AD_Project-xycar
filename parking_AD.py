@@ -1,9 +1,30 @@
 #linedetector
+def parkingMatch(self):
+    self.img1 = cv2.imwrite('/home/nvidia/xycar/src/auto_drive/src/f.jpg', self.cam_img)
+    self.img2 = cv2.imread('/home/nvidia/xycar/src/auto_drive/src/f.jpg', cv2.IMREAD_GRAYSCALE)
+    self.kp2, self.des2 = self.orb.detectAndCompute(self.img2, None)
+
+    self.imgTrainColor = cv2.imread('/home/nvidia/xycar/src/auto_drive/src/parking.jpg', cv2.IMREAD_GRAYSCALE)
+
+    self.kp1, self.des1 = self.orb.detectAndCompute(self.imgTrainColor, None)
+
+    self.matches = self.bf.match(self.des1, self.des2)
+
+    self.matches = sorted(self.matches, key=lambda x: x.distance)
+
+    self.dist = [m.distance for m in self.matches if m.distance < 50]
+
+    print(self.dist)
+
+    if len(self.dist) >= 12:
+        self.result = True
+        return self.result
+
+#autodrive
 def trace(self):
     if self.line_detector.parkingMatch() == True:
     self.parking()
 
-#autodrive
 def parking(self):
     parking_0, parking_3, parking_4, parking_6 = self.obstacle_detector.for_parking_distance()
     while parking_6 <= 50:
